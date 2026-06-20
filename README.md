@@ -1,78 +1,103 @@
-# My Fish Shell Setup
+# My Zsh Setup — Ubuntu & macOS
 
-Complete Fish shell setup for **Ubuntu** with modern CLI tools.
+Reproducible **Zsh** shell setup with modern CLI tools, in two platform flavors that share the
+same workflow, aliases and [`starship`](https://starship.rs) prompt:
+
+- **[`ubuntu/`](ubuntu/)** — Zsh on Ubuntu (Debian/apt; works on WSL too).
+- **[`macos/`](macos/)** — Zsh on macOS (Homebrew).
+
+Both add the two niceties Zsh doesn't ship by default:
+
+- **Autosuggestions** — a gray suggestion ahead of the cursor from your history
+  ([`zsh-autosuggestions`](https://github.com/zsh-users/zsh-autosuggestions)).
+- **Syntax highlighting** — the first word turns green when the command exists, red when it
+  doesn't ([`zsh-syntax-highlighting`](https://github.com/zsh-users/zsh-syntax-highlighting)).
+
+## Structure
+
+```
+ubuntu/   .zshrc · starship.toml · setup-guide.md   (apt · /usr/share · batcat)
+macos/    .zshrc · starship.toml · setup-guide.md   (Homebrew · $(brew --prefix)/share · bat)
+```
+
+Pick your folder and follow its `setup-guide.md`.
 
 ## Included Tools
 
-- [`oh-my-fish`](https://github.com/oh-my-fish/oh-my-fish) - Fish shell framework
 - [`starship`](https://starship.rs) - Cross-shell prompt
 - [`zoxide`](https://github.com/ajeetdsouza/zoxide) - Smart directory jumper
 - [`fzf`](https://github.com/junegunn/fzf) - Fuzzy finder
 - [`eza`](https://github.com/eza-community/eza) - Modern ls replacement
 - [`bat`](https://github.com/sharkdp/bat) - Cat with syntax highlighting
-- [`nvm`](https://github.com/nvm-sh/nvm) - Node version manager
+- [`fnm`](https://github.com/Schniz/fnm) - Fast Node version manager
 - [`pnpm`](https://pnpm.io) - Fast package manager
 - [`bun`](https://bun.sh) - JavaScript runtime
 - [`uv`](https://docs.astral.sh/uv) - Python package installer
 - [`docker`](https://docs.docker.com/engine) - Container platform
+- [`zsh-autosuggestions`](https://github.com/zsh-users/zsh-autosuggestions) - Fish-style autosuggestions
+- [`zsh-syntax-highlighting`](https://github.com/zsh-users/zsh-syntax-highlighting) - Command validity highlighting
 
 ## Quick Start
 
-### Install Basic Tools
+### Ubuntu
 
 ```sh
 sudo apt update && sudo apt upgrade -y
+sudo apt install -y curl git zsh
 
-# curl + git
-sudo apt install -y curl git
+# make zsh the default shell
+chsh -s $(which zsh)
 
-# fish-shell
-sudo apt-add-repository ppa:fish-shell/release-4
-sudo apt update
-sudo apt install -y fish
-
-# Set fish as default shell
-chsh -s $(which fish)
+# drop in the config
+cp ubuntu/.zshrc ~/.zshrc
+mkdir -p ~/.config && cp ubuntu/starship.toml ~/.config/starship.toml
 ```
 
-### Complete Installation Guide
+Full steps: [ubuntu/setup-guide.md](ubuntu/setup-guide.md)
 
-For detailed installation instructions, see [fish-setup-guide.md](docs/fish-setup-guide.md)
+### macOS
+
+Zsh is already the default shell. Install [Homebrew](https://brew.sh), then:
+
+```sh
+brew install starship zoxide fzf eza bat \
+  zsh-autosuggestions zsh-syntax-highlighting
+
+# drop in the config
+cp macos/.zshrc ~/.zshrc
+mkdir -p ~/.config && cp macos/starship.toml ~/.config/starship.toml
+source ~/.zshrc
+```
+
+Full steps: [macos/setup-guide.md](macos/setup-guide.md)
 
 ## Optional Configuration
 
 ### Git Setup
 
 ```sh
-# Set default branch
 git config --global init.defaultBranch main
-
-# Set your credentials
 git config --global user.name "your_github_username"
 git config --global user.email "your_github_email"
 ```
 
 ### SSH Setup
 
-Create SSH key (Ed25519 - recommended for 2025):
+Create an SSH key (Ed25519):
 
 ```sh
 mkdir -p ~/.ssh
 ssh-keygen -t ed25519 -C "your_github_email" -f ~/.ssh/id_ed25519
 ```
 
-Start SSH agent:
+Start the agent and add the key:
 
 ```sh
-# Start SSH agent (choose one)
-ssh-agent -c | source    # Fish
-eval "$(ssh-agent -s)"   # Bash/Zsh
-
-# Add key
+eval "$(ssh-agent -s)"
 ssh-add ~/.ssh/id_ed25519
 ```
 
-Display public key (add this key to GitHub):
+Display the public key (add it to GitHub):
 
 ```sh
 cat ~/.ssh/id_ed25519.pub
