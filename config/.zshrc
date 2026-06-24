@@ -1,66 +1,81 @@
 # ===========================================
-# Zsh Shell Configuration (Ubuntu)
+# Zsh Shell Configuration
+# Works on macOS, Linux and WSL (Homebrew everywhere)
 # ===========================================
 
+# --- Homebrew (macOS Apple Silicon / Intel, Linux / WSL) ---
+if [ -x /opt/homebrew/bin/brew ]; then
+    eval "$(/opt/homebrew/bin/brew shellenv)"
+elif [ -x /usr/local/bin/brew ]; then
+    eval "$(/usr/local/bin/brew shellenv)"
+elif [ -x /home/linuxbrew/.linuxbrew/bin/brew ]; then
+    eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+elif [ -x "$HOME/.linuxbrew/bin/brew" ]; then
+    eval "$("$HOME/.linuxbrew/bin/brew" shellenv)"
+fi
+
 # ===========================================
-# History (defaults parecidos com o fish)
+# History
 # ===========================================
 HISTFILE="$HOME/.zsh_history"
 HISTSIZE=10000
 SAVEHIST=10000
 setopt SHARE_HISTORY HIST_IGNORE_DUPS HIST_IGNORE_SPACE INC_APPEND_HISTORY
-setopt INTERACTIVE_COMMENTS              # permite '# comentario' ao colar comandos
+setopt INTERACTIVE_COMMENTS              # allow '# comment' when pasting commands
 
 # ===========================================
-# Completion
+# Completion (needed for the autosuggest 'completion' strategy)
 # ===========================================
+fpath=("$HOMEBREW_PREFIX/share/zsh/site-functions" $fpath)
 autoload -Uz compinit && compinit
 
 # ===========================================
-# Autosuggestions  (sugestao cinza vinda do historico/completion)
+# Autosuggestions (gray suggestion from history / completion)
 # ===========================================
-source /usr/share/zsh-autosuggestions/zsh-autosuggestions.zsh
-ZSH_AUTOSUGGEST_STRATEGY=(history completion)   # imita o fish (history + completion)
+source "$HOMEBREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
+ZSH_AUTOSUGGEST_STRATEGY=(history completion)
 
 # ===========================================
-# Ferramentas interativas
+# Interactive tools
 # ===========================================
 eval "$(starship init zsh)"          # prompt
 eval "$(zoxide init zsh)"            # smart cd
-cd() {                               # override: cria a pasta e pula com zoxide
+cd() {                               # override: create the dir, then jump with zoxide
     [ -n "$1" ] && mkdir -p "$1"
     z "$@"
 }
 
-# FZF (fuzzy finder) - instalado via git em ~/.fzf (versao recente p/ 'fzf --zsh')
-export PATH="$HOME/.fzf/bin:$PATH"
+# FZF (fuzzy finder) - bat preview (the binary is 'bat' on every Homebrew platform)
 export FZF_DEFAULT_OPTS="--style full --no-clear"
-export FZF_CTRL_T_OPTS="--preview 'batcat -n --color=always {}'"   # no Ubuntu o bat e 'batcat'
+export FZF_CTRL_T_OPTS="--preview 'bat -n --color=always {}'"
 export FZF_CTRL_R_OPTS=""
 source <(fzf --zsh)
 
 # ===========================================
-# Audio (WSLg PulseAudio) - so aplica no WSL
+# WSL audio (WSLg PulseAudio) - no-op outside WSL
 # ===========================================
 [ -e /mnt/wslg/PulseServer ] && export PULSE_SERVER=/mnt/wslg/PulseServer
 
 # ===========================================
 # PATH
 # ===========================================
-# pnpm (no Ubuntu o home e ~/.local/share/pnpm)
-export PNPM_HOME="$HOME/.local/share/pnpm"
+# pnpm (home differs: ~/Library/pnpm on macOS, ~/.local/share/pnpm elsewhere)
+if [ "$(uname)" = "Darwin" ]; then
+    export PNPM_HOME="$HOME/Library/pnpm"
+else
+    export PNPM_HOME="$HOME/.local/share/pnpm"
+fi
 case ":$PATH:" in *":$PNPM_HOME:"*) ;; *) export PATH="$PNPM_HOME:$PATH" ;; esac
 
 # bun
 export BUN_INSTALL="$HOME/.bun"
 export PATH="$BUN_INSTALL/bin:$PATH"
-[ -s "$BUN_INSTALL/_bun" ] && source "$BUN_INSTALL/_bun"   # completions do bun
+[ -s "$BUN_INSTALL/_bun" ] && source "$BUN_INSTALL/_bun"   # bun completions
 
 # uv / local bin
 export PATH="$HOME/.local/bin:$PATH"
 
-# fnm (Node version manager - substitui o nvm; --use-on-cd troca a versao por pasta)
-export PATH="$HOME/.local/share/fnm:$PATH"
+# fnm (Node version manager; --use-on-cd switches version per folder)
 command -v fnm >/dev/null && eval "$(fnm env --use-on-cd)"
 
 # ===========================================
@@ -68,16 +83,14 @@ command -v fnm >/dev/null && eval "$(fnm env --use-on-cd)"
 # ===========================================
 alias cls='clear'
 alias mkdir='mkdir -pv'
-alias bat='batcat'          # no Ubuntu o pacote bat instala o binario como 'batcat'
 alias ls='eza --color --long --git --no-filesize --icons --no-time --no-user --no-permissions'
 
 # ===========================================
-# Aliases - APT Package Manager
+# Aliases - Homebrew
 # ===========================================
-alias i='sudo apt install'
-alias i-get='sudo apt-get install'
-alias upd='sudo apt update && sudo apt upgrade -y'
-alias clean='sudo apt-get autoremove && sudo apt-get autoclean && sudo apt-get clean'
+alias i='brew install'
+alias upd='brew update && brew upgrade'
+alias clean='brew cleanup'
 
 # ===========================================
 # Aliases - Zsh Config
@@ -107,7 +120,7 @@ alias dcp='docker compose pull'
 
 # ===========================================
 # Syntax highlighting
-# DEVE ser a ULTIMA linha do arquivo - pinta a 1a palavra de
-# verde (comando existe) ou vermelho (nao existe)
+# MUST be the LAST line - paints the first word green (command exists)
+# or red (command not found)
 # ===========================================
-source /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+source "$HOMEBREW_PREFIX/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
