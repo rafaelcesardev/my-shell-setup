@@ -18,22 +18,42 @@ fi
 # History
 # ===========================================
 HISTFILE="$HOME/.zsh_history"
-HISTSIZE=10000
-SAVEHIST=10000
-setopt SHARE_HISTORY HIST_IGNORE_DUPS HIST_IGNORE_SPACE INC_APPEND_HISTORY
+HISTSIZE=5000
+SAVEHIST=5000
+setopt SHARE_HISTORY HIST_IGNORE_ALL_DUPS HIST_SAVE_NO_DUPS HIST_FIND_NO_DUPS HIST_IGNORE_SPACE
 setopt INTERACTIVE_COMMENTS              # allow '# comment' when pasting commands
 
 # ===========================================
 # Completion (needed for the autosuggest 'completion' strategy)
 # ===========================================
-fpath=("$HOMEBREW_PREFIX/share/zsh/site-functions" $fpath)
+fpath=("$HOMEBREW_PREFIX/share/zsh-completions" "$HOMEBREW_PREFIX/share/zsh/site-functions" $fpath)
 autoload -Uz compinit && compinit
+
+# ===========================================
+# fzf-tab (replaces the tab-completion menu with an fzf picker + preview)
+# MUST load after compinit and before autosuggestions / syntax-highlighting
+# ===========================================
+source "$HOMEBREW_PREFIX/share/fzf-tab/fzf-tab.zsh"
+zstyle ':completion:*' menu no                                   # let fzf-tab drive the menu
+zstyle ':fzf-tab:complete:cd:*' fzf-preview 'eza --color=always --icons $realpath'  # dir preview on cd
+zstyle ':fzf-tab:*' fzf-flags --height=60%                       # popup size
 
 # ===========================================
 # Autosuggestions (gray suggestion from history / completion)
 # ===========================================
 source "$HOMEBREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
 ZSH_AUTOSUGGEST_STRATEGY=(history completion)
+
+# ===========================================
+# Prefix history search (Up/Down filters by what's already typed)
+# ===========================================
+autoload -Uz up-line-or-beginning-search down-line-or-beginning-search
+zle -N up-line-or-beginning-search
+zle -N down-line-or-beginning-search
+bindkey '^[[A' up-line-or-beginning-search    # Up
+bindkey '^[[B' down-line-or-beginning-search  # Down
+bindkey "${terminfo[kcuu1]}" up-line-or-beginning-search    # Up (terminfo fallback)
+bindkey "${terminfo[kcud1]}" down-line-or-beginning-search  # Down (terminfo fallback)
 
 # ===========================================
 # Interactive tools
@@ -48,7 +68,6 @@ cd() {                               # override: create the dir, then jump with 
 # FZF (fuzzy finder) - bat preview (the binary is 'bat' on every Homebrew platform)
 export FZF_DEFAULT_OPTS="--style full --no-clear"
 export FZF_CTRL_T_OPTS="--preview 'bat -n --color=always {}'"
-export FZF_CTRL_R_OPTS=""
 source <(fzf --zsh)
 
 # ===========================================

@@ -12,9 +12,9 @@ it does not install or switch your shell.
 
 | Shell | Autosuggestions | Syntax highlighting |
 | :---- | :-------------: | :-----------------: |
-| Zsh   | ✓ (brew plugin) | ✓ (brew plugin)     |
-| Fish  | ✓ built-in      | ✓ built-in          |
-| Bash  | —               | —                   |
+| Zsh   | ✓ (brew plugin) |   ✓ (brew plugin)   |
+| Fish  |   ✓ built-in    |     ✓ built-in      |
+| Bash  |        —        |          —          |
 
 > Bash has no autosuggestions / syntax highlighting (those are Zsh-plugin / Fish features). It
 > still gets the starship prompt, zoxide, fzf and every alias.
@@ -39,25 +39,27 @@ them. (The shell config you drop in at Step 4 also does this automatically from 
 One command, identical on every platform:
 
 ```sh
-brew install starship zoxide fzf eza bat fnm pnpm bun uv \
-  zsh-autosuggestions zsh-syntax-highlighting git
+brew install starship zoxide fzf eza bat fnm pnpm bun uv git \
+  zsh-autosuggestions zsh-syntax-highlighting zsh-completions fzf-tab
 ```
 
-| Tool | What it does |
-| :--- | :--- |
-| [`starship`](https://starship.rs) | Cross-shell prompt |
-| [`zoxide`](https://github.com/ajeetdsouza/zoxide) | Smart `cd` that learns your dirs |
-| [`fzf`](https://github.com/junegunn/fzf) | Fuzzy finder (`Ctrl-T`, `Ctrl-R`) |
-| [`eza`](https://github.com/eza-community/eza) | Modern `ls` (aliased to `ls`) |
-| [`bat`](https://github.com/sharkdp/bat) | `cat` with syntax highlighting |
-| [`fnm`](https://github.com/Schniz/fnm) | Fast Node version manager |
-| [`pnpm`](https://pnpm.io) | Fast Node package manager |
-| [`bun`](https://bun.sh) | JavaScript runtime + toolkit |
-| [`uv`](https://docs.astral.sh/uv) | Fast Python / package manager |
-| [`git`](https://git-scm.com) | Version control |
-| `zsh-autosuggestions`, `zsh-syntax-highlighting` | The two Zsh niceties above |
+| Tool                                              | What it does                      |
+| :------------------------------------------------ | :-------------------------------- |
+| [`starship`](https://starship.rs)                 | Cross-shell prompt                |
+| [`zoxide`](https://github.com/ajeetdsouza/zoxide) | Smart `cd` that learns your dirs  |
+| [`fzf`](https://github.com/junegunn/fzf)          | Fuzzy finder (`Ctrl-T`, `Ctrl-R`) |
+| [`eza`](https://github.com/eza-community/eza)     | Modern `ls` (aliased to `ls`)     |
+| [`bat`](https://github.com/sharkdp/bat)           | `cat` with syntax highlighting    |
+| [`fnm`](https://github.com/Schniz/fnm)            | Fast Node version manager         |
+| [`pnpm`](https://pnpm.io)                         | Fast Node package manager         |
+| [`bun`](https://bun.sh)                           | JavaScript runtime + toolkit      |
+| [`uv`](https://docs.astral.sh/uv)                 | Fast Python / package manager     |
+| [`git`](https://git-scm.com)                      | Version control                   |
+| `zsh-autosuggestions`, `zsh-syntax-highlighting`  | The two Zsh niceties above        |
+| `zsh-completions`                                 | Extra completion definitions      |
+| [`fzf-tab`](https://github.com/Aloxaf/fzf-tab)    | Tab menu as an fzf picker + preview |
 
-> The two `zsh-*` plugins are only used by Zsh. Installing them on a Bash/Fish machine is harmless
+> The `zsh-*` plugins are only used by Zsh. Installing them on a Bash/Fish machine is harmless
 > — keeping one command for everyone is simpler.
 
 ## Step 3 — Install Docker
