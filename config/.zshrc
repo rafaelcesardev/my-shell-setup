@@ -36,7 +36,7 @@ autoload -Uz compinit && compinit
 source "$HOMEBREW_PREFIX/share/fzf-tab/fzf-tab.zsh"
 zstyle ':completion:*' menu no                                   # let fzf-tab drive the menu
 zstyle ':fzf-tab:complete:cd:*' fzf-preview 'eza --color=always --icons $realpath'  # dir preview on cd
-zstyle ':fzf-tab:*' fzf-flags --height=60%                       # popup size
+zstyle ':fzf-tab:*' fzf-flags --height=60% --bind=space:accept   # popup size; Space selects
 
 # ===========================================
 # Autosuggestions (gray suggestion from history / completion)
